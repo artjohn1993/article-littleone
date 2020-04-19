@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val userListType = object : TypeToken<ArrayList<Article.Result>>() {}.type
-
         val jsonFileString = getJsonDataFromAsset(applicationContext, "sample.json")
         var gson = Gson()
         var data : List<Article.Result> = gson.fromJson(jsonFileString, userListType)
@@ -28,9 +27,8 @@ class MainActivity : AppCompatActivity() {
 
             var content = gson.fromJson(item.content,Content.Result::class.java)
 
-
             if (content.contents != null) {
-                content.contents.forEach { contentItem ->
+                content.contents!!.forEach { contentItem ->
                     if (contentItem.p != null) {
                         paragraph(this, mainActivity, contentItem.p!!)
                     }
@@ -42,12 +40,8 @@ class MainActivity : AppCompatActivity() {
                     }
                     else if(contentItem.ol != null) {
                         contentItem.ol!!.li.forEach { liItem ->
-                            println(liItem.contents)
                             if (liItem.dot != null) {
                                 articleList(this, mainActivity,"", liItem.dot!!, liItem.contents, ListType.NUMBER)
-                            }
-                            else {
-
                             }
                         }
                     }
@@ -67,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     else if(contentItem.accordions != null) {
-                        contentItem.accordions.forEach { accordionItem ->
+                        contentItem.accordions!!.forEach { accordionItem ->
                             accordionSection(this, mainActivity, accordionItem.title, accordionItem.contents)
                         }
                     }
@@ -88,8 +82,8 @@ class MainActivity : AppCompatActivity() {
 
             if(content.timeline != null) {
                 content.timeline!!.forEach {timeLineItem  ->
-                    timelineTitle(this, mainActivity,timeLineItem.section)
-                    timeLineItem.events.forEach { eventItem ->
+                    timelineTitle(this, mainActivity,timeLineItem.section!!)
+                    timeLineItem.events!!.forEach { eventItem ->
                         timeline(this, mainActivity, eventItem)
                     }
                 }

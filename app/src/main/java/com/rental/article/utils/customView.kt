@@ -14,22 +14,12 @@ import com.rental.article.enum.ListType
 import com.rental.article.model.Content
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.media.MediaPlayer
-import android.net.Uri
-import android.net.http.SslError
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintSet
-import android.support.constraint.Constraints
 import android.support.design.button.MaterialButton
+import android.support.v4.content.ContextCompat
 import android.text.Layout
 import android.util.DisplayMetrics
 import android.view.Display
 import android.view.Gravity
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.AnimationSet
-import android.view.animation.ScaleAnimation
 import org.jetbrains.anko.*
 import android.view.animation.TranslateAnimation
 import android.webkit.*
@@ -40,6 +30,9 @@ import org.jetbrains.anko.custom.style
 import kotlin.math.absoluteValue
 import org.jetbrains.anko.support.v4.contentLoadingProgressBar
 
+val colorLightGray = "#4C4C4C"
+val colorBlack = "#2C2C2C"
+val colorPink = "#BC8590"
 
 fun paragraph(context: Context,layout: LinearLayout, data: String) {
 
@@ -53,6 +46,8 @@ fun paragraph(context: Context,layout: LinearLayout, data: String) {
     text.setPadding(0, 0,0,25)
     text.textSize = 15f
     text.movementMethod = LinkMovementMethod.getInstance()
+    text.textColor = Color.parseColor(colorLightGray)
+    text.setLineSpacing(1.3f,1.3f)
     layout.addView(text)
 }
 
@@ -63,6 +58,7 @@ fun h1(context: Context, layout: LinearLayout, data: String?) {
     text.textSize = 25f
     text.typeface = Typeface.DEFAULT_BOLD
     text.setPadding(0, 0,0,25)
+    text.textColor = Color.parseColor(colorBlack)
 
     layout.addView(text)
 }
@@ -74,16 +70,18 @@ fun h2(context: Context,layout: LinearLayout, data: String) {
     text.textSize = 18f
     text.typeface = Typeface.DEFAULT_BOLD
     text.setPadding(0, 0,0,15)
-
+    text.textColor = Color.parseColor(colorBlack)
     layout.addView(text)
 }
 
 fun articleList(context: Context,layout: LinearLayout, icon : String, number: String, paragraph: String, type : ListType) {
-    val color = Color.parseColor("#D81B60")
+    val color = Color.parseColor("#444B78")
 
     val content = TextView(context)
     content.text = paragraph
-    content.setPadding(10, 0,0,0)
+    content.setPadding(30, 0,0,0)
+    content.textColor = Color.parseColor(colorLightGray)
+    content.setLineSpacing(1.1f, 1.1f)
 
     val container = LinearLayout(context)
     container.orientation = LinearLayout.HORIZONTAL
@@ -139,6 +137,7 @@ fun iconAlert(context: Context,layout: LinearLayout, alertContent: String) {
     content.setPadding(10, 0,0,0)
     content.setTextColor(Color.WHITE)
 
+
     container.addView(icon)
     container.addView(content)
 
@@ -174,6 +173,7 @@ fun accordionSection(context: Context,layout: LinearLayout, titleVal: String, co
     title.textSize = 15f
     title.setTypeface(title.typeface, Typeface.BOLD)
     title.layoutParams = titleParam
+    title.textColor = Color.parseColor(colorBlack)
 
 
     val arrowParam = LinearLayout.LayoutParams(80,80)
@@ -190,6 +190,9 @@ fun accordionSection(context: Context,layout: LinearLayout, titleVal: String, co
     container.addView(headerContainer)
 
     val content = TextView(context)
+    content.textColor = Color.parseColor(colorBlack)
+    content.setLineSpacing(1.3f,1.3f)
+
     var contentHtmlString = ""
     for (item in contentVal) {
         if (item.p != null) {
@@ -241,12 +244,12 @@ fun accordionSection(context: Context,layout: LinearLayout, titleVal: String, co
     headerContainer.setOnClickListener {
         if(container.height == 200) {
             val newHeight = contentHeight + 20
-            slideView(container,200,newHeight,context)
+            slideView(container,200,newHeight)
             arrow.image = context.resources.getDrawable(com.rental.article.R.mipmap.ic_arrow_up)
         }
         else {
             val newHeight = contentHeight + 20
-                slideView(container,newHeight,200,context)
+                slideView(container,newHeight,200)
             arrow.image = context.resources.getDrawable(com.rental.article.R.mipmap.ic_arrow_down)
         }
     }
@@ -261,7 +264,7 @@ fun accordionSection(context: Context,layout: LinearLayout, titleVal: String, co
     }
 }
 
-fun slideView(view: View, currentHeight: Int, newHeight: Int, context: Context) {
+fun slideView(view: View, currentHeight: Int, newHeight: Int) {
     val slideAnimator = ValueAnimator.ofInt(currentHeight, newHeight)
     slideAnimator.duration = 300
 
@@ -272,7 +275,6 @@ fun slideView(view: View, currentHeight: Int, newHeight: Int, context: Context) 
     }
 
     val animationSet = AnimatorSet()
-    animationSet.interpolator = AccelerateDecelerateInterpolator()
     animationSet.play(slideAnimator)
     animationSet.start()
 }
@@ -289,13 +291,14 @@ fun qoute(context: Context,layout: LinearLayout, qouteValue : String) {
     imageParam.bottomMargin = 20
     image.layoutParams = imageParam
 
-    val content = TextView(context)
+    var content = TextView(context)
     content.text = qouteValue
-    content.textColor = Color.parseColor("#ee67b3")
+    content.textColor = Color.parseColor(colorPink)
     content.gravity = Gravity.CENTER
     val contentParam = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
     contentParam.bottomMargin = 40
-    content.layoutParams = contentParam
+    content.setLineSpacing(1.3f,1.3f)
+
 
     container.addView(image)
     container.addView(content)
@@ -346,6 +349,8 @@ fun video(context: Context, layout: LinearLayout, url: String) {
 
 fun download(context: Context, layout: LinearLayout, download : Content.Download) {
 
+    //    val param = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 45)
+    //    param.height = 45
     val button = MaterialButton(context)
     val data = download.filesizeKb /1000
     val title = "  ".plus(download.label).plus(" ").plus(data)
@@ -353,6 +358,9 @@ fun download(context: Context, layout: LinearLayout, download : Content.Download
     button.icon = (context.resources.getDrawable(R.mipmap.ic_download))
     button.iconSize = 50
     button.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
+    button.backgroundTintList = context.resources.getColorStateList(R.color.colorPink)
+    button.transformationMethod = null
+    button.setPadding(10,60,10,60)
 
     layout.addView(button)
 }
@@ -360,11 +368,6 @@ fun download(context: Context, layout: LinearLayout, download : Content.Download
 fun timeline(context: Context, layout: LinearLayout , data: Content.Events) {
     val displayMetrics = DisplayMetrics()
     context.windowManager.defaultDisplay.getMetrics(displayMetrics)
-    val parentParam = ConstraintLayout.LayoutParams(0,ConstraintLayout.LayoutParams.WRAP_CONTENT)
-
-    val parentContainer = ConstraintLayout(context)
-    parentContainer.backgroundColor = Color.RED
-    parentContainer.layoutParams = parentParam
 
     val container = LinearLayout(context)
     container.orientation = LinearLayout.HORIZONTAL
@@ -385,10 +388,10 @@ fun timeline(context: Context, layout: LinearLayout , data: Content.Events) {
 
     val arrowParam = LinearLayout.LayoutParams(80,80)
     arrowParam.gravity = Gravity.CENTER_VERTICAL
-    arrowParam.setMargins(100,0,-15,0)
+    arrowParam.setMargins(40,0,-15,0)
     val arrow = ImageView(context)
     arrow.image = context.resources.getDrawable(com.rental.article.R.drawable.ic_triangle)
-    arrow.setColorFilter(Color.parseColor("#f9fafd"))
+        arrow.setColorFilter(Color.parseColor("#f9fafd"))
     arrow.layoutParams = arrowParam
 
 
@@ -424,7 +427,7 @@ fun timelineContent(context: Context, layout: RelativeLayout , data: Content.Eve
     val contentName = TextView(context)
     contentName.text = data.name
     contentName.layoutParams = nameParam
-    contentName.textColor = Color.BLACK
+    contentName.textColor = Color.parseColor(colorBlack)
     contentName.typeface = Typeface.DEFAULT_BOLD
     contentName.setPadding(0,10,0,0)
 
@@ -438,7 +441,7 @@ fun timelineContent(context: Context, layout: RelativeLayout , data: Content.Eve
         contentTime.text = Html.fromHtml(data.time)
     }
     contentTime.layoutParams = timeParam
-    contentTime.textColor = Color.BLACK
+    contentTime.textColor = Color.parseColor(colorBlack)
     contentTime.setPadding(0,10,0,0)
 
 
@@ -449,7 +452,7 @@ fun timelineContent(context: Context, layout: RelativeLayout , data: Content.Eve
     val contentDescription = TextView(context)
     contentDescription.text = data.description
     contentDescription.layoutParams = descriptionParam
-    contentDescription.textColor = Color.BLACK
+    contentDescription.textColor = Color.parseColor(colorLightGray)
 
     layout.addView(contentName)
     layout.addView(contentTime)
@@ -545,12 +548,12 @@ fun table(context: Context,layout: LinearLayout,data : List<List<String>>, numbe
 
             val contentParam = TableRow.LayoutParams((displayMetrics.widthPixels - 100) / 2,150)
             contentParam.setMargins(5,0,5,0)
-            contentParam.gravity = Gravity.CENTER_VERTICAL
             val content = TextView(context)
             content.layoutParams = contentParam
             content.text = text
             content.width = (displayMetrics.widthPixels - 100) / 2
             content.height = 150
+            content.gravity = Gravity.CENTER
             content.textColor = Color.BLACK
 
             content.setPadding(30,10,30,10)

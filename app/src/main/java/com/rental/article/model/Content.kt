@@ -4,7 +4,7 @@ package com.rental.article.model
 object Content {
 
     data class Result(
-        var contents : List<Contents>,
+        var contents : List<Contents>?,
         var timeline: List<Timeline>?,
         var table: List<List<String>>?,
         var tableWithColHeaders: List<List<String>>?,
@@ -13,8 +13,8 @@ object Content {
     )
 
     data class Timeline(
-        var section: String,
-        var events : List<Events>
+        var section: String?,
+        var events : List<Events>?
     )
 
     data class Events(
@@ -29,7 +29,7 @@ object Content {
         var h1: String?,
         var h2: String?,
         var p: String?,
-        var accordions: List<Accordions>,
+        var accordions: List<Accordions>?,
         var blockquote: String?,
         var img: String?,
         var video: String?,
